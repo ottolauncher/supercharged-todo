@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.3
 	github.com/joho/godotenv v1.4.0
 	github.com/vektah/gqlparser/v2 v2.4.2
+	golang.org/x/text v0.3.7
 	gopkg.in/rethinkdb/rethinkdb-go.v6 v6.2.1
 )
 

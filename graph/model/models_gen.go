@@ -2,6 +2,10 @@
 
 package model
 
+import (
+	"time"
+)
+
 type BaseModel interface {
 	IsBaseModel()
 }
@@ -16,12 +20,12 @@ type NewRole struct {
 }
 
 type NewTodo struct {
-	Text        string   `json:"text"`
-	UserID      string   `json:"userId"`
-	UserIds     []string `json:"userIds"`
-	Description *string  `json:"description"`
-	End         *string  `json:"end"`
-	Start       string   `json:"start"`
+	Text        string     `json:"text"`
+	UserID      string     `json:"userId"`
+	UserIds     []string   `json:"userIds"`
+	Description *string    `json:"description"`
+	End         *time.Time `json:"end"`
+	Start       time.Time  `json:"start"`
 }
 
 type NewUser struct {
@@ -33,10 +37,6 @@ type NewUser struct {
 	Roles     []string `json:"roles"`
 }
 
-
-
-
-
 type UpdateRole struct {
 	ID          string  `json:"id"`
 	Name        string  `json:"name"`
@@ -44,13 +44,13 @@ type UpdateRole struct {
 }
 
 type UpdateTodo struct {
-	ID          string   `json:"id"`
-	Text        string   `json:"text"`
-	UserID      string   `json:"userId"`
-	UserIds     []string `json:"userIds"`
-	Description *string  `json:"description"`
-	End         *string  `json:"end"`
-	Start       string   `json:"start"`
+	ID          string     `json:"id"`
+	Text        string     `json:"text"`
+	UserID      string     `json:"userId"`
+	UserIds     []string   `json:"userIds"`
+	Description *string    `json:"description"`
+	End         *time.Time `json:"end"`
+	Start       time.Time  `json:"start"`
 }
 
 type UpdateUser struct {
@@ -63,5 +63,3 @@ type UpdateUser struct {
 	Biography   *string  `json:"biography"`
 	Roles       []string `json:"roles"`
 }
-
-

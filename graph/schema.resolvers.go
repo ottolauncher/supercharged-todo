@@ -52,11 +52,18 @@ func (r *mutationResolver) CreateRole(ctx context.Context, input model.NewRole) 
 }
 
 func (r *mutationResolver) UpdateRole(ctx context.Context, input model.UpdateRole) (*model.Role, error) {
-	panic(fmt.Errorf("not implemented"))
+	res, err := r.RM.Update(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *mutationResolver) DeleteRole(ctx context.Context, input map[string]interface{}) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	if err := r.RM.Delete(ctx, input); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func (r *queryResolver) Todos(ctx context.Context, filter map[string]interface{}, limit *int, page *int) ([]*model.Todo, error) {
@@ -76,15 +83,40 @@ func (r *queryResolver) User(ctx context.Context, filter map[string]interface{})
 }
 
 func (r *queryResolver) Roles(ctx context.Context, filter map[string]interface{}, limit *int, page *int) ([]*model.Role, error) {
-	panic(fmt.Errorf("not implemented"))
+	res, err := r.RM.All(ctx, filter, *limit, *page)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Role(ctx context.Context, filter map[string]interface{}) (*model.Role, error) {
-	panic(fmt.Errorf("not implemented"))
+	res, err := r.RM.Get(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Search(ctx context.Context, query string, limit *int, page *int) ([]model.SearchResult, error) {
-	panic(fmt.Errorf("not implemented"))
+	var (
+		res         []model.SearchResult
+		searchError []error
+	)
+	// TODO: add user and todos also
+	roles, rErr := r.RM.Search(ctx, query)
+	if rErr != nil {
+		searchError = append(searchError, rErr)
+	}
+	if len(searchError) > 0 {
+		return nil, fmt.Errorf("%s", searchError)
+	}
+	if len(roles) > 0 {
+		for _, r := range roles {
+			res = append(res, r)
+		}
+	}
+	return res, nil
 }
 
 func (r *subscriptionResolver) TodoAdded(ctx context.Context) (<-chan *model.Todo, error) {

@@ -7,7 +7,7 @@ import db "github.com/ottolauncher/supercharged-todo/graph/db/rethinkdb"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	RM db.RoleManager
-	UM db.UserManager
-	TM db.TodoManager
+	RM *db.RoleManager
+	UM *db.UserManager
+	TM *db.TodoManager
 }

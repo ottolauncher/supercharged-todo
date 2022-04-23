@@ -2,10 +2,11 @@ package model
 
 import (
 	"errors"
-	"github.com/99designs/gqlgen/graphql"
 	"io"
 	"strconv"
 	"time"
+
+	"github.com/99designs/gqlgen/graphql"
 )
 
 func MarshalTimestamp(t time.Time) graphql.Marshaler {
@@ -17,7 +18,7 @@ func MarshalTimestamp(t time.Time) graphql.Marshaler {
 	})
 }
 
-func UnMarshalTimestamp(v interface{}) (time.Time, error) {
+func UnmarshalTimestamp(v interface{}) (time.Time, error) {
 	if tmpStr, ok := v.(string); ok {
 		return time.Parse(time.RFC3339Nano, tmpStr)
 	}
