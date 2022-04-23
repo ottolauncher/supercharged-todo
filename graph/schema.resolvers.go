@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/ottolauncher/supercharged-todo/graph/generated"
 	"github.com/ottolauncher/supercharged-todo/graph/model"
@@ -36,7 +37,18 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, input map[string]inte
 }
 
 func (r *mutationResolver) CreateRole(ctx context.Context, input model.NewRole) (*model.Role, error) {
-	panic(fmt.Errorf("not implemented"))
+	now := time.Now()
+	role := model.Role{
+		Name:        input.Name,
+		Description: input.Description,
+		CreatedAt:   &now,
+		UpdatedAt:   nil,
+	}
+	res, err := r.RM.Create(ctx, role)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *mutationResolver) UpdateRole(ctx context.Context, input model.UpdateRole) (*model.Role, error) {

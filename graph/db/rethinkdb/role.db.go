@@ -3,7 +3,9 @@ package db
 import (
 	"context"
 	"github.com/ottolauncher/supercharged-todo/graph/model"
-	r "gopkg.in/rethinkdb/rethinkdb-go.v6"
+	"github.com/ottolauncher/supercharged-todo/helpers/text"
+	rd "gopkg.in/rethinkdb/rethinkdb-go.v6"
+	"time"
 )
 
 type IRole interface {
@@ -16,11 +18,11 @@ type IRole interface {
 }
 
 type RoleManager struct {
-	Session *r.Session
+	Session *rd.Session
 	tblName string
 }
 
-func NewRoleManager(session *r.Session, tblName string) *RoleManager {
+func NewRoleManager(session *rd.Session, tblName string) *RoleManager {
 	return &RoleManager{
 		Session: session,
 		tblName: tblName,
@@ -28,28 +30,88 @@ func NewRoleManager(session *r.Session, tblName string) *RoleManager {
 }
 
 func (r RoleManager) Create(ctx context.Context, args model.Role) (*model.Role, error) {
-	//TODO implement me
-	panic("implement me")
+	_, cancel := context.WithTimeout(ctx, 350*time.Millisecond)
+	defer cancel()
+	tmpStr := text.Slugify(args.Name)
+	res, err := rd.Table(r.tblName).Insert(args).RunWrite(r.Session)
+	if err != nil {
+		return nil, err
+	}
+	args.ID = res.GeneratedKeys[0]
+	args.Slug = &tmpStr
+	return &args, nil
 }
 
 func (r RoleManager) Update(ctx context.Context, args model.UpdateRole) (*model.Role, error) {
-	//TODO implement me
-	panic("implement me")
+	_, cancel := context.WithTimeout(ctx, 350*time.Millisecond)
+	defer cancel()
+	tmpStr := text.Slugify(args.Name)
+	now := time.Now()
+	var role model.Role
+	if len(*args.Description) > 0 {
+		role.Description = args.Description
+	}
+	role.Slug = &tmpStr
+	role.UpdatedAt = &now
+	role.Name = args.Name
+	_, err := rd.Table(r.tblName).Get(args.ID).Update(role).RunWrite(r.Session)
+	if err != nil {
+		return nil, err
+	}
+	return &role, nil
 }
 
 func (r RoleManager) Delete(ctx context.Context, filter map[string]interface{}) error {
-	//TODO implement me
-	panic("implement me")
+	_, cancel := context.WithTimeout(ctx, 350*time.Millisecond)
+	defer cancel()
+
+	_, err := rd.Table(r.tblName).Filter(filter).Delete().RunWrite(r.Session)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r RoleManager) Get(ctx context.Context, filter map[string]interface{}) (*model.Role, error) {
-	//TODO implement me
-	panic("implement me")
+	_, cancel := context.WithTimeout(ctx, 350*time.Millisecond)
+	defer cancel()
+	cursor, err := rd.Table(r.tblName).Filter(filter).Run(r.Session)
+	defer func(cursor *rd.Cursor) {
+		err := cursor.Close()
+		if err != nil {
+
+		}
+	}(cursor)
+	if err != nil {
+		return nil, err
+	}
+	var role model.Role
+	err = cursor.One(&role)
+	if err != nil {
+		return nil, err
+	}
+	return &role, nil
 }
 
 func (r RoleManager) All(ctx context.Context, filter map[string]interface{}, limit int, page int) ([]*model.Role, error) {
-	//TODO implement me
-	panic("implement me")
+	_, cancel := context.WithTimeout(ctx, 650*time.Millisecond)
+	defer cancel()
+	var roles []*model.Role
+	cursor, err := rd.Table(r.tblName).Skip(page).Limit(limit).Filter(filter).Run(r.Session)
+	defer func(cursor *rd.Cursor) {
+		err := cursor.Close()
+		if err != nil {
+
+		}
+	}(cursor)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(&roles)
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
 }
 
 func (r RoleManager) Search(ctx context.Context, query string) ([]*model.Role, error) {
