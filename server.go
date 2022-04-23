@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
-	db "github.com/ottolauncher/supercharged-todo/graph/db/rethinkdb"
-	r "gopkg.in/rethinkdb/rethinkdb-go.v6"
 	"log"
 	"net/http"
 	"os"
 	"sync"
+
+	"github.com/joho/godotenv"
+	db "github.com/ottolauncher/supercharged-todo/graph/db/rethinkdb"
+	r "gopkg.in/rethinkdb/rethinkdb-go.v6"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -38,7 +39,7 @@ func main() {
 	tm := db.NewTodoManager(session, "todos")
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
-		UM: um, RM: rm, TM: tm,
+		UM: um, RM: rm, TM: tm, Session: session,
 	}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

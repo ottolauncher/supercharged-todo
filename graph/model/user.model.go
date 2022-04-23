@@ -10,7 +10,7 @@ type User struct {
 	Username  string     `json:"username" rethinkdb:"username" redis:"username"`
 	Slug      *string    `json:"slug" rethinkdb:"slug"`
 	Email     string     `json:"email" rethinkdb:"email" redis:"email"`
-	Password  string     `json:"password" rethinkdb:"password" redis:"password"`
+	Password  string     `json:"-" rethinkdb:"password" redis:"password"`
 	Biography *string    `json:"biography" rethinkdb:"biography,omitempty" redis:"biography,omitempty"`
 	Roles     []*Role    `json:"roles" rethinkdb:"roles" redis:"roles"`
 	RoleIDs   []string   `json:"role_ids" rethinkdb:"role_ids" redis:"role_ids"`
