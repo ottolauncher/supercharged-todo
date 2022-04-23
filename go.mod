@@ -4,6 +4,8 @@ go 1.17
 
 require (
 	github.com/99designs/gqlgen v0.17.3
+	github.com/go-chi/chi v1.5.4
+	github.com/gorilla/websocket v1.4.2
 	github.com/joho/godotenv v1.4.0
 	github.com/vektah/gqlparser/v2 v2.4.2
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
@@ -15,7 +17,6 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/golang/protobuf v1.3.4 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hailocab/go-hostpool v0.0.0-20160125115350-e80d13ce29ed // indirect
 	github.com/hashicorp/golang-lru v0.5.0 // indirect
 	github.com/matryer/moq v0.2.3 // indirect

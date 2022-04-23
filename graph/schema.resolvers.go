@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/mail"
@@ -257,7 +258,37 @@ func (r *queryResolver) Search(ctx context.Context, query string, limit *int, pa
 }
 
 func (r *subscriptionResolver) TodoAdded(ctx context.Context) (<-chan *model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+	changeObserver := make(chan rd.ChangeResponse, 1)
+	cursor, err := rd.Table("todos").Changes(rd.ChangesOpts{IncludeInitial: true}).Run(r.Session)
+	if err != nil {
+		return nil, err
+	}
+	go func() {
+		var change rd.ChangeResponse
+		for cursor.Next(&change) {
+			changeObserver <- change
+		}
+	}()
+
+	for {
+		select {
+		case <-ctx.Done():
+			cursor.Close()
+			return nil, nil
+		case <-changeObserver:
+			change := <-changeObserver
+			var todo model.Todo
+			data, err := json.Marshal(change.NewValue)
+			if err != nil {
+				return nil, err
+			}
+			if err := json.Unmarshal([]byte(data), &todo); err != nil {
+				return nil, err
+			}
+			r.TodoChannels <- &todo
+			return r.TodoChannels, nil
+		}
+	}
 }
 
 // Mutation returns generated.MutationResolver implementation.
