@@ -2,19 +2,66 @@
 
 package model
 
+type BaseModel interface {
+	IsBaseModel()
+}
+
+type SearchResult interface {
+	IsSearchResult()
+}
+
+type NewRole struct {
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
+}
+
 type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+	Text        string   `json:"text"`
+	UserID      string   `json:"userId"`
+	UserIds     []string `json:"userIds"`
+	Description *string  `json:"description"`
+	End         *string  `json:"end"`
+	Start       string   `json:"start"`
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type NewUser struct {
+	Username  string   `json:"username"`
+	Password1 string   `json:"password1"`
+	Password2 string   `json:"password2"`
+	Email     string   `json:"email"`
+	Biography *string  `json:"biography"`
+	Roles     []string `json:"roles"`
 }
 
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+
+
+
+
+type UpdateRole struct {
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
 }
+
+type UpdateTodo struct {
+	ID          string   `json:"id"`
+	Text        string   `json:"text"`
+	UserID      string   `json:"userId"`
+	UserIds     []string `json:"userIds"`
+	Description *string  `json:"description"`
+	End         *string  `json:"end"`
+	Start       string   `json:"start"`
+}
+
+type UpdateUser struct {
+	ID          string   `json:"id"`
+	Username    string   `json:"username"`
+	OldPassword string   `json:"oldPassword"`
+	Password1   string   `json:"password1"`
+	Password2   string   `json:"password2"`
+	Email       string   `json:"email"`
+	Biography   *string  `json:"biography"`
+	Roles       []string `json:"roles"`
+}
+
+
