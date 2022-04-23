@@ -1,0 +1,132 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar Timestamp
+scalar Map
+
+union SearchResult = Todo | Role | User
+
+interface BaseModel {
+  id: ID!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  slug: String
+}
+
+type Todo implements BaseModel{
+  id: ID!
+  text: String!
+  done: Boolean!
+  user: User!
+  userID: ID!
+  assigned: [User!]
+  assignedIDs: [ID!]
+  description: String
+  start: Timestamp!
+  end: Timestamp
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  slug: String
+}
+
+type User implements BaseModel{
+  id: ID!
+  username: String!
+  email: String!
+  password: String!
+  biography: String
+  roles: [Role]
+  lastLogin: Timestamp
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  slug: String
+}
+
+type Role implements BaseModel {
+  id: ID!
+  name: String!
+  description: String
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  slug: String
+}
+
+type Query {
+  todos(filter: Map, limit: Int=12, page: Int=0): [Todo!]!
+  todo(filter: Map!): Todo
+
+  users(filter: Map, limit: Int=12, page: Int=0): [User!]!
+  user(filter: Map!): User
+
+  roles(filter: Map, limit: Int=12, page: Int=0): [Role!]!
+  role(filter: Map!): Role
+
+  search(query: String!, limit: Int=12, page: Int=0):[SearchResult!]!
+}
+
+input NewTodo {
+  text: String!
+  userId: ID!
+  userIds: [ID!]
+  description: String
+  end: Timestamp
+  start: Timestamp!
+}
+input UpdateTodo {
+  id: ID!
+  text: String!
+  userId: ID!
+  userIds: [ID!]
+  description: String
+  end: Timestamp
+  start: Timestamp!
+}
+
+input NewUser {
+  username: String!
+  password1: String!
+  password2: String!
+  email: String!
+  biography: String
+  roles: [ID!]!
+}
+input UpdateUser {
+  id: ID!
+  username: String!
+  oldPassword: String!
+  password1: String!
+  password2: String!
+  email: String!
+  biography: String
+  roles: [ID!]!
+}
+
+input NewRole {
+  name: String!
+  description: String
+}
+input UpdateRole {
+  id: ID!
+  name: String!
+  description: String
+}
+
+type Mutation {
+  createTodo(input: NewTodo!): Todo!
+  updateTodo(input: UpdateTodo!): Todo!
+  deleteTodo(input: Map!): Boolean!
+
+  createUser(input: NewUser!): User!
+  updateUser(input: UpdateUser!): User!
+  deleteUser(input: Map!): Boolean!
+
+  createRole(input: NewRole!): Role!
+  updateRole(input: UpdateRole!): Role!
+  deleteRole(input: Map!): Boolean!
+
+}
+
+type Subscription {
+  todoAdded: Todo!
+}
